@@ -1,0 +1,255 @@
+<div class="flex flex-col min-h-screen">
+  <!--
+// v0 by Vercel.
+// https://v0.dev/t/jueCLU67SIL
+-->
+
+  <app-header></app-header>
+
+  <div class="w-full grow mx-auto px-4 md:px-32 py-8 md:py-12 bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
+    <div class="w-full">
+      <div class="flex flex-row gap-8" *ngIf="currentStep == 1">
+        <div class="flex flex-col gap-8">
+          <div>
+            <h1 class="text-2xl font-bold">Book Your Seat</h1>
+            <p class="text-muted-foreground text-teal-600">Select your preferred route and seats.</p>
+          </div>
+          <div class="flex flex-col gap-8">
+            <div data-aos="fade-up" class="rounded-lg bg-white dark:bg-gray-800 text-card-foreground shadow-sm" data-v0-t="card">
+              <div class="flex flex-col space-y-1.5 p-6">
+                <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Route Details</h3>
+              </div>
+              <div class="p-6">
+                <div class="grid gap-4" *ngIf="selectedSchedule; else noSchedule">
+                  <div class="flex items-center justify-between">
+                    <div class="text-muted-foreground">Departure</div>
+                    <div>
+                      <div class="font-medium">{{ selectedSchedule.route.departureCity }}</div>
+                      <div class="text-sm text-muted-foreground text-gray-500">{{ selectedSchedule.departureTime | date:'shortTime' }}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="text-muted-foreground">Arrival</div>
+                    <div>
+                      <div class="font-medium">{{ selectedSchedule.route.arrivalCity }}</div>
+                      <div class="text-sm text-muted-foreground text-gray-500">{{ selectedSchedule.arrivalTime | date:'shortTime' }}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="text-muted-foreground">Duration</div>
+                    <div class="font-medium">{{ calculateDuration() }}</div>
+                  </div>
+                </div>
+                <ng-template #noSchedule>
+                  <div class="text-center text-muted-foreground">No schedule selected</div>
+                </ng-template>
+              </div>
+            </div>
+
+
+            <div data-aos="fade-up" data-aos-delay="100" class="rounded-lg bg-white dark:bg-gray-800 text-card-foreground shadow-sm p-6">
+              <h3 class="text-2xl font-semibold mb-4">Seat Selection</h3>
+              <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button
+                  *ngFor="let seatType of seatTypes; let i = index"
+                  (click)="selectSeatType(i)"
+                  [class]="getSeatTypeButtonClass(i)"
+                >
+                  <span class="mr-2">{{ i + 1 }}</span>
+                  {{ seatType }}
+                </button>
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400 mt-4">Choose your preferred seat type.</div>
+            </div>
+          </div>
+        </div>
+        <div  class="rounded-lg bg-white dark:bg-gray-800 text-card-foreground shadow-sm" data-aos="fade-up" data-aos-delay="200" data-v0-t="card">
+          <div class="flex flex-col space-y-1.5 p-6">
+            <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">
+              Passenger Information
+            </h3>
+          </div>
+          <div class="p-6">
+            <form class="grid gap-4">
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="firstName"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                    id="firstName"
+                    placeholder="John"
+                    fdprocessedid="ve1lg"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="lastName"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                    id="lastName"
+                    placeholder="Doe"
+                    fdprocessedid="ijtzp"
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  for="email"
+                >
+                  Email
+                </label>
+                <input
+                  class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                  id="email"
+                  placeholder="john@example.com"
+                  type="email"
+                  fdprocessedid="z9uon"
+                />
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  for="phone"
+                >
+                  Phone
+                </label>
+                <input
+                  class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                  id="phone"
+                  placeholder="+1 (555) 555-5555"
+                  type="tel"
+                  fdprocessedid="zbvjce"
+                />
+              </div>
+              <div class="space-y-2 relative">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  for="specialRequests"
+                >
+                  Special Requests
+                </label>
+                <textarea
+                  class="flex h-36 resize-none w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                  id="specialRequests"
+                  placeholder="e.g. Wheelchair assistance, dietary restrictions"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="w-full flex justify-end gap-6" aos="fade-up" aos-delay="100">
+          <button (click)="proceedToPayment()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md dark:bg-teal-600 dark:hover:bg-teal-700  px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 duration-300">
+            Proceed to Payment
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep==2">
+        <div class="space-y-6">
+          <div data-aos="fade-up" class="rounded-lg bg-white dark:bg-gray-800 text-card-foreground shadow-sm" data-v0-t="card">
+            <div class="flex flex-col space-y-1.5 p-6">
+              <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Booking Summary</h3>
+            </div>
+            <div class="p-6">
+              <div class="grid gap-4">
+                <div class="flex items-center justify-between">
+                  <div class="text-muted-foreground">Route</div>
+                  <div class="font-medium">New York, NY to Los Angeles, CA</div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-muted-foreground">Seat</div>
+                  <div class="font-medium">2B</div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-muted-foreground">Passenger(s)</div>
+                  <div class="font-medium">John Doe</div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-muted-foreground">Total Price</div>
+                  <div class="font-medium">$250.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-aos="fade-up" data-aos-delay="100" class="rounded-lg bg-white dark:bg-gray-800 text-card-foreground shadow-sm" data-v0-t="card">
+            <div class="flex flex-col space-y-1.5 p-6">
+              <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Payment Details</h3>
+            </div>
+            <div class="p-6">
+              <form class="grid gap-4">
+                <div class="space-y-2">
+                  <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="cardNumber"
+                  >
+                    Card Number
+                  </label>
+                  <input
+                    class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                    id="cardNumber"
+                    placeholder="XXXX XXXX XXXX XXXX"
+                    type="text"
+                    fdprocessedid="tf4wj"
+                  />
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <label
+                      class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      for="expiryDate"
+                    >
+                      Expiry Date
+                    </label>
+                    <input
+                      class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                      id="expiryDate"
+                      placeholder="MM/YY"
+                      type="text"
+                      fdprocessedid="3a8d"
+                    />
+                  </div>
+                  <div class="space-y-2">
+                    <label
+                      class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      for="cvv"
+                    >
+                      CVV
+                    </label>
+                    <input
+                      class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none   disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText hover:border-teal-500 dark:hover:border-teal-500 focus:border-teal-500 dark:focus:border-teal-500"
+                      id="cvv"
+                      placeholder="123"
+                      type="text"
+                      fdprocessedid="tzmdzv"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div data-aos="fade-up" data-aos-delay="100" class="w-full flex justify-end gap-6">
+          <button (click)="goBackToDetails()" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-600 dark:hover:text-teal-600 dark:hover:border-teal-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 duration-300">
+            Back
+          </button>
+          <button (click)="confirmBooking()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md dark:bg-teal-600 dark:hover:bg-teal-700  px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 duration-300">
+            Confirm Booking
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+
+</div>

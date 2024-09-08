@@ -1,0 +1,5 @@
+<select class="bg-lightBackground italic dark:bg-darkBackground text-lightText dark:text-darkText text-sm font-medium" (change)="switchLang($event)">
+  <option *ngFor="let lang of langs" [value]="lang.code">
+    {{lang.name}}
+  </option>
+</select>

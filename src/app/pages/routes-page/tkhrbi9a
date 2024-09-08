@@ -1,0 +1,117 @@
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm" data-aos="fade-up">
+      <form class="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Departure Location -->
+        <div>
+          <label class="text-sm font-medium mb-1 block" for="departureCity">
+            Departure
+          </label>
+          <select id="departureCity" [(ngModel)]="departureCity" name="departureCity" class="pr-2 flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText">
+            <option value="">Select Departure City</option>
+            <option *ngFor="let location of locations" [value]="location.name">{{ location.name }}</option>
+          </select>
+        </div>
+        <!-- Destination Location -->
+        <div>
+          <label class="text-sm font-medium mb-1 block" for="arrivalCity">
+            Destination
+          </label>
+          <select id="arrivalCity" [(ngModel)]="arrivalCity" name="arrivalCity" class="pr-2 flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText">
+            <option value="">Select Arrival City</option>
+            <option *ngFor="let location of locations" [value]="location.name">{{ location.name }}</option>
+          </select>
+        </div>
+        <!-- Trip Type: One-Way or Round Trip -->
+        <!--
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-1">Trip Type</label>
+          <div class="flex justify-around bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg w-full md:w-fit relative">
+            <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-t from-teal-600 to-teal-500 rounded-md transition-all duration-300 ease-in-out"
+                 [ngStyle]="{'transform': isOneWay ? 'translateX(0)' : 'translateX(100%)'}">
+            </div>
+            <button class="px-6 py-2 h-10 rounded-md transition-colors relative z-10"
+                    [ngClass]="{'text-white': isOneWay, 'text-gray-500': !isOneWay}"
+                    (click)="isOneWay = true">One-Way</button>
+            <button class="px-6 py-2 h-10 rounded-md transition-colors ml-1 relative z-10"
+                    [ngClass]="{'text-white': !isOneWay, 'text-gray-500': isOneWay}"
+                    (click)="isOneWay = false">Round Trip</button>
+          </div>
+        </div>
+        -->
+
+
+        <!-- Travel Date and Return Date -->
+
+        <div class="grid grid-cols-1  gap-4 mb-6">
+          <label for="travel-date" class="block text-sm font-medium mb-1">Travel Date</label>
+          <input [(ngModel)]="travelDate" name="travelDate" type="date" id="travel-date" class="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 cursor-pointer bg-white dark:bg-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 custom-date-input">
+        </div>
+
+        <!--
+        <div class="grid grid-cols-1  gap-4 mb-6" [ngClass]="{'hidden': isOneWay}">
+          <label for="return-date" class="block text-sm font-medium mb-1">Return Date</label>
+          <input type="date" id="return-date" class="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 cursor-pointer bg-white dark:bg-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 custom-date-input">
+        </div>
+        -->
+
+
+        <!-- Number of Travelers (Adults / Children) -->
+        <!--
+        <div class="sm:col-span-3 w-full md:w-2/3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-medium mb-1 block" for="adults">
+                Adults
+              </label>
+              <input
+                class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+                id="adults"
+                type="number"
+                min="1"
+                placeholder="Number of adults"
+              />
+            </div>
+            <div>
+              <label class="text-sm font-medium mb-1 block" for="children">
+                Children
+              </label>
+              <input
+                class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+                id="children"
+                type="number"
+                min="0"
+                placeholder="Number of children"
+              />
+            </div>
+          </div>
+        </div>
+        -->
+        <!-- Pet Option -->
+
+        <!--
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-1">Traveling with a Pet?</label>
+          <div class="flex border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg w-fit relative">
+            <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-t from-teal-600 to-teal-500 rounded-md transition-all duration-300 ease-in-out"
+                 [ngStyle]="{'transform': travelingWithPet ? 'translateX(0)' : 'translateX(100%)'}">
+            </div>
+            <button class="px-4 py-2 h-10 rounded-md transition-colors relative z-10"
+                    [ngClass]="{'text-white': travelingWithPet, 'text-gray-500': !travelingWithPet}"
+                    (click)="travelingWithPet = true">Yes</button>
+            <button class="px-4 py-2 h-10 rounded-md transition-colors ml-1 relative z-10"
+                    [ngClass]="{'text-white': !travelingWithPet, 'text-gray-500': travelingWithPet}"
+                    (click)="travelingWithPet = false">No</button>
+          </div>
+        </div>
+        -->
+        <!-- Search Button -->
+        <div class="w-full flex justify-end sm:col-span-3" data-aos="fade-left">
+          <button
+            (click)="searchRoutes()"
+            class="inline-flex items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 dark:focus:ring-offset-gray-900"
+            type="submit"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+    </div>

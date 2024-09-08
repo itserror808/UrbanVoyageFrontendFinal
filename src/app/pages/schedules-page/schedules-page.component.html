@@ -1,0 +1,96 @@
+<div class="flex flex-col min-h-screen">
+  <app-header></app-header>
+
+  <div *ngIf="loading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+    <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+  </div>
+
+  <div class="flex-grow w-full h-full mx-auto px-4 md:px-32 py-8 md:py-12 bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText flex flex-col">
+    <div class="flex-grow">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Travel Schedules</h1>
+      </div>
+
+      <div class="max-w-[600px] my-4">
+        <input
+          [(ngModel)]="filterText"
+          (input)="applyFilter()"
+          class="flex h-10 w-full rounded-md border border-[#777777] dark:border-[#444444] bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-[#666666] focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+          placeholder="Filter by destination or travel type"
+          type="text"
+        />
+      </div>
+
+      <div class="bg-white flex-grow dark:bg-[#222222] rounded-lg shadow-md overflow-hidden">
+        <div class="relative w-full overflow-auto">
+          <table class="w-full caption-bottom text-sm">
+            <thead class="[&_tr]:border-b bg-gray-50 dark:bg-[#333333]">
+            <tr class="border-b transition-colors hover:bg-[#999999] dark:hover:bg-[#444444]">
+              <th (click)="toggleSort('departure.time')" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 cursor-pointer">
+                Departure
+                <i [class]="getSortIcon('departure.time')"></i>
+              </th>
+              <th (click)="toggleSort('arrival.time')" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 cursor-pointer">
+                Arrival
+                <i [class]="getSortIcon('arrival.time')"></i>
+              </th>
+              <th (click)="toggleSort('destination.city')" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 cursor-pointer">
+                Destination
+                <i [class]="getSortIcon('destination.city')"></i>
+              </th>
+              <th (click)="toggleSort('duration')" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 cursor-pointer">
+                Duration
+                <i [class]="getSortIcon('duration')"></i>
+              </th>
+              <th (click)="toggleSort('price')" class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 cursor-pointer">
+                Price
+                <i [class]="getSortIcon('price')"></i>
+              </th>
+            </tr>
+            </thead>
+            <tbody class="[&_tr:last-child]:border-0">
+            <ng-container *ngIf="filteredSchedules.length > 0; else noRoutes">
+              <tr *ngFor="let schedule of paginatedSchedules" class="border-b transition-colors hover:bg-[#EEEEEE] dark:hover:bg-[#444444]">
+                <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                  <div class="font-medium">{{ schedule.departureTime }}</div>
+                  <div class="text-muted-foreground text-sm">{{ schedule.route.departureCity }}</div>
+                </td>
+                <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                  <div class="font-medium">{{ schedule.arrivalTime }}</div>
+                  <div class="text-muted-foreground text-sm">{{ schedule.route.arrivalCity }}</div>
+                </td>
+                <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                  <div class="font-medium">{{ schedule.route.arrivalCity }}</div>
+                  <div class="text-muted-foreground text-sm">{{ schedule.route.distance }} km</div>
+                </td>
+                <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                  <div class="font-medium">{{ formatDuration(schedule.duration) }}</div>
+                </td>
+                <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                  <div class="font-medium">{{schedule.schedulePrice}}MAD</div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noRoutes>
+              <tr class="border-b transition-colors hover:bg-[#999999] dark:hover:bg-[#444444]">
+                <td colspan="6" class="p-6 text-center text-muted-foreground">
+                  There are no available routes at the moment.
+                </td>
+              </tr>
+            </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Add the custom paginator -->
+    <app-custom-paginator
+      [currentPage]="currentPage"
+      [totalItems]="filteredSchedules.length"
+      [itemsPerPage]="itemsPerPage"
+      (pageChange)="onPageChange($event)"
+    ></app-custom-paginator>
+  </div>
+
+  <app-footer></app-footer>
+</div>

@@ -1,0 +1,22 @@
+loadPassengerTickets() {
+  this.loading = true;
+  this.authService.getCurrentUserId().subscribe(userId => {
+    if (userId) {
+      this.passengerService.getPassengersByUserId(userId).subscribe(
+        tickets => {
+
+          this.loading = false;
+          console.log('Raw tickets data:', tickets);
+          this.passengerTickets = this.passengerService.transformPassengerData(tickets);
+          console.log('Loaded passenger tickets:', this.passengerTickets);
+          this.cdr.detectChanges();
+        },
+        error => {
+          this.loading = false;
+          console.error('Error fetching passenger tickets:', error);
+          this.cdr.detectChanges();
+        }
+      );
+    }
+  });
+}

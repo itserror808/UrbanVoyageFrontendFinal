@@ -1,0 +1,25 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer class="flex justify-between flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-32 bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <p class="text-xs text-muted-foreground">© {{currentYear}} Urban Travel. All rights reserved.</p>
+    <div class="flex flex-row gap-2">
+      <app-language-selector></app-language-selector>
+      <app-dark-mode-toggle></app-dark-mode-toggle>
+      <button (click)="scrollToTop()" aria-label="Scroll to top">
+        <i class='bx bx-chevrons-up text-2xl text-md text-lightText dark:text-darkText dark:hover:text-teal-500 hover:text-teal-500 duration-200'></i>
+      </button>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,146 @@
+<div class="flex flex-col min-h-screen">
+  <!-- Header remains the same -->
+
+  <app-message [message]="message" [type]="messageType" (close)="closeMessage()"></app-message>
+
+  <div *ngIf="loading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+    <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+  </div>
+
+  <app-header></app-header>
+
+  <main class="flex-grow w-full mx-auto px-4 md:px-32 py-8 md:py-12 bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText flex flex-col">
+    <section class="mb-8">
+      <h2 class="text-2xl font-bold mb-4">Your Schedules</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 rounded-lg gap-8" *ngIf="passengerTickets.length > 0; else noSchedules" >
+        <div  *ngFor="let ticket of passengerTickets" data-aos="fade-up" class="rounded-lg bg-white dark:bg-[#222222] text-card-foreground shadow-sm" data-v0-t="card">
+          <div class="flex flex-col space-y-1.5 p-6">
+            <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">
+              {{ticket.departureCity}} to {{ticket.arrivalCity}}
+            </h3>
+            <p class="text-sm text-muted-foreground"></p>
+            <div class="flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              <span>{{ticket.departureTime | date:'medium'}}</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="font-medium">Ticket Number</p>
+                <p class="font-medium italic">Passenger-{{ticket.reservationId}}</p>
+              </div>
+              <div>
+                <p class="font-medium">Seat Type</p>
+                <p class="font-medium italic text-teal-500">{{ticket.seatType}}</p>
+              </div>
+              <div>
+                <p class="font-medium ">Price</p>
+                <p class="font-medium ">{{ticket.schedulePrice}} MAD</p>
+              </div>
+            </div>
+          </div>
+          <div class="items-center p-6 flex justify-end gap-2">
+            <!--
+            <button [disabled]="ticket.status === 'REFUNDED' || ticket.status === 'CANCELLED'" (click)="openChangeScheduleModal(ticket)" class="border border-teal-600 hover:border-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+              Change Schedule
+            </button>
+            -->
+            <button (click)="requestRefund(ticket)" [disabled]="ticket.status === 'REFUNDED' || ticket.status === 'CANCELLED'"  class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+              Request Refund
+            </button>
+          </div>
+          <div *ngIf="ticket.status === 'REFUNDED' || ticket.status === 'REFUND_REQUESTED' || ticket.status === 'REFUND_REJECTED'"
+               class="absolute inset-0 flex items-center justify-center rounded-lg bg-black backdrop-blur-sm bg-opacity-10 text-center w-full h-full">
+            <p class="text-xl italic font-medium flex flex-row items-center justify-center gap-2">
+              <i class="text-3xl" [class]="getStatusIcon(ticket.status)"></i>
+              {{ticket.status}}
+            </p>
+          </div>
+        </div>
+
+        <!--vercel modal-->
+        <div *ngIf="showRefundModal" class="fixed inset-0 z-50 overflow-auto bg-white dark:bg-darkBackground bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm flex items-center justify-center" data-aos="fade-down" >
+
+          <div class=" max-w-md bg-white dark:bg-[#222222]  w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 rounded-lg shadow-lg p-6 flex flex-col gap-4 text-lightText dark:text-darkText" data-v0-t="card">
+            <div class="flex flex-col">
+              <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Request a Refund</h3>
+              <p class="text-sm text-muted-foreground mt-2">Provide a reason for your refund request.</p>
+            </div>
+            <div class="">
+              <div class="">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-teal-50"
+                  for="reason"
+                >
+                  Reason
+                </label>
+                <textarea
+                  [(ngModel)]="refundMotif" rows="4" cols="50"
+                  class="shadow appearance-none border hover:border-teal-500 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline duration-300"
+                  id="reason"
+                  placeholder="Enter your reason for the refund..."
+                ></textarea>
+              </div>
+            </div>
+            <div class="items-center flex justify-end gap-2">
+              <button (click)="closeRefundModal()" class="border border-teal-600 hover:border-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+                Cancel
+              </button>
+              <button  (click)="submitRefundRequest()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- end vercel modal -->
+      </div>
+      <ng-template #noSchedules>
+        <div class="rounded-2xl transition-colors hover:bg-[#999999] dark:hover:bg-[#444444]">
+          <p class="p-6 text-center text-muted-foreground">
+            There are no available Schedules at the moment.
+          </p>
+
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Hnaya ndiro chi section dyal reclamation -->
+
+
+
+
+
+
+
+    <!-- Change Schedule Modal -->
+    <div *ngIf="showChangeScheduleModal" class="fixed inset-0 z-50 overflow-auto bg-white dark:bg-darkBackground bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm flex items-center justify-center" data-aos="fade-down">
+      <div data-aos="fade-down" data-aos-duration="400" class="relative bg-white dark:bg-[#222222] w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 rounded-lg shadow-lg p-6 flex flex-col gap-4">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Change Schedule</h3>
+        <input [(ngModel)]="newScheduleDate" type="datetime-local" class="shadow appearance-none cursor-pointer border hover:border-teal-500 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline duration-300">
+        <div class="flex justify-end gap-4">
+          <button (click)="closeChangeScheduleModal()" class="border border-teal-600 hover:border-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">Cancel</button>
+          <button (click)="changeSchedule()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer remains the same -->
+</div>

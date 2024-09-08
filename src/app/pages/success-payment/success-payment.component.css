@@ -1,0 +1,17 @@
+.animated-checkmark {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: draw 1s cubic-bezier(.53,.17,.42,.88) forwards;
+}
+
+.animated-checkmark circle {
+  stroke-dasharray: 70;
+  stroke-dashoffset: 70;
+  animation: draw 1s cubic-bezier(.53,.17,.42,.88) forwards 0.5s;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

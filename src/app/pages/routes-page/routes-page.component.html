@@ -1,0 +1,236 @@
+<div class="flex flex-col min-h-screen">
+  <app-header></app-header>
+
+  <app-carousel></app-carousel>
+  <div class="flex-grow bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
+    <div class="flex justify-center flex-col md:flex-row gap-16 w-full px-4 py-8 sm:px-6 lg:px-32 ">
+      <!-- Find ur next text -->
+      <div class="mb-8" data-aos="fade-up">
+        <h1 appAutoTranslate class="text-3xl font-bold mb-2">Find your next trip</h1>
+        <p appAutoTranslate class="text-[#444444] dark:text-[#777777]">Search for autocar routes to your destination.</p>
+      </div>
+
+      <!-- Route picker card -->
+      <div class="bg-white dark:bg-transparent rounded-lg shadow-sm w-full md:w-1/2 " data-aos="fade-up">
+        <form class="p-6 grid grid-cols-1 ">
+          <div class="flex flex-col gap-4 items-center justify-center w-full">
+            <div class="grid grid-cols-1 w-full">
+
+              <div class="relative z-50">
+                <label appAutoTranslate class="text-sm font-medium mb-1 block" for="arrivalCity">
+                  Travel Date
+                </label>
+                <button
+                  (click)="openDatePicker()"
+                  class="w-full px-3 py-2 text-left border border-[#777777] dark:border-[#444444] rounded-md focus:ring-teal-500 focus:border-teal-500 bg-white dark:bg-[#333333] text-[#333333] dark:text-[#888888] flex items-center justify-between"
+                >
+                  <span>{{ travelDate | date:'mediumDate' }}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#666666]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </button>
+
+                <!-- Custom Date Picker -->
+                <div *ngIf="showDatePicker" class="absolute z-30 mt-1 w-64 bg-white dark:bg-[#222222] shadow-lg rounded-md border border-[#888888] dark:border-[#333333]">
+                  <div class="p-2">
+                    <div class="flex justify-between items-center mb-2">
+                      <button (click)="prevMonth()" class="text-teal-600 hover:text-teal-700">&lt;</button>
+                      <span>{{ currentMonth | date:'MMMM yyyy' }}</span>
+                      <button (click)="nextMonth()" class="text-teal-600 hover:text-teal-700">&gt;</button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center">
+                      <div *ngFor="let day of daysOfWeek" class="text-[#555555] text-xs font-medium">
+                        {{ day }}
+                      </div>
+                      <ng-container *ngFor="let day of calendarDays">
+                        <div
+                          *ngIf="day !== 0"
+                          (click)="selectDate(day)"
+                          [ngClass]="{
+                'bg-teal-100 dark:bg-teal-800': isSelectedDate(day),
+                'text-[#777777] dark:text-[#444444]': !isCurrentMonth(day),
+                'hover:bg-[#999999] dark:hover:bg-[#333333] cursor-pointer': isCurrentMonth(day)
+              }"
+                          class="p-1 text-sm rounded-full"
+                        >
+                          {{ day }}
+                        </div>
+                        <div *ngIf="day === 0"></div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--
+              <div class="flex flex-row gap-4 w-full">
+                <div class="w-full mb-4">
+                  <label appAutoTranslate class="text-sm font-medium mb-1 block" for="departureCity">
+                    Departure
+                  </label>
+                  <div class="relative">
+                    <div (click)="toggleDepartureDropdown()" class="pr-2 flex h-10 w-full rounded-md border border-[#777777] dark:border-[#444444] bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-[#666666] focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText cursor-pointer">
+                      {{ departureCity || 'Select Departure City' }}
+                    </div>
+                    <div *ngIf="isDepartureOpen" class="absolute z-10 w-full mt-1 bg-white dark:bg-[#333333] border border-[#777777] dark:border-[#444444] rounded-md shadow-lg">
+                      <div (click)="selectDepartureCity('')" class="px-3 py-2 hover:bg-[#999999] dark:hover:bg-[#444444] cursor-pointer">Select Departure City</div>
+                      <div *ngFor="let location of locations" (click)="selectDepartureCity(location.name)" class="px-3 py-2 hover:bg-[#999999] dark:hover:bg-[#444444] cursor-pointer">
+                        {{ location.name }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-full">
+                  <label appAutoTranslate class="text-sm font-medium mb-1 block" for="arrivalCity">
+                    Destination
+                  </label>
+                  <div class="relative">
+                    <div (click)="toggleArrivalDropdown()" class="pr-2 flex h-10 w-full rounded-md border border-[#777777] dark:border-[#444444] bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-[#666666] focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText cursor-pointer">
+                      {{ arrivalCity || 'Select Arrival City' }}
+                    </div>
+                    <div *ngIf="isArrivalOpen" class="absolute z-10 w-full mt-1 bg-white dark:bg-[#333333] border border-[#777777] dark:border-[#444444] rounded-md shadow-lg">
+                      <div (click)="selectArrivalCity('')" class="px-3 py-2 hover:bg-[#999999] dark:hover:bg-[#444444] cursor-pointer">Select Arrival City</div>
+                      <div *ngFor="let location of locations" (click)="selectArrivalCity(location.name)" class="px-3 py-2 hover:bg-[#999999] dark:hover:bg-[#444444] cursor-pointer">
+                        {{ location.name }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            -->
+            <div class="w-full mt-4 flex flex-col gap-4">
+
+
+              <div class="flex justify-end">
+                <button (click)="openMapModal()" class="inline-flex items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 dark:focus:ring-offset-[#111111]">
+                  Select Cities on Map
+                </button>
+              </div>
+            </div>
+
+
+
+
+          </div>
+
+          <!-- Travel Date and Return Date -->
+
+
+
+          <!-- Search Button
+          <div class="w-full mt-4 flex justify-end sm:col-span-3" data-aos="fade-left">
+            <button
+              appAutoTranslate
+              (click)="searchRoutes()"
+              class="inline-flex items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 dark:focus:ring-offset-[#111111]"
+              type="submit"
+            >
+              Search
+            </button>
+          </div>
+          -->
+        </form>
+      </div>
+
+
+
+      <!-- Rest of the content remains unchanged -->
+
+
+    </div>
+    <div *ngIf="departureCity && arrivalCity && showTraffic" class="flex justify-center items-center gap-4 text-xl md:text-2xl">
+      <div class="flex flex-row gap-2">
+        <span class="">Departure:</span> <span class="font-semibold italic text-teal-500">{{ departureCity || 'Not selected' }}</span>
+      </div>
+      <i class='bx bx-chevrons-right text-2xl mx-2 text-teal-500 traveling'></i>
+      <div class="flex flex-row gap-2">
+        <span class="">Arrival:</span> <span class="font-semibold italic text-teal-500">{{ arrivalCity || 'Not selected' }}</span>
+      </div>
+    </div>
+    <!-- Schedules list -->
+    <div *ngIf="searchPerformed && !isLoading" class="relative z-0 mt-8 w-full px-6 md:px-32 justify-content grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div *ngFor="let schedule of schedules" class="rounded-lg border border-[#888888] border-opacity-40 dark:border-[#333333] bg-white dark:bg-[#222222] shadow-sm" data-aos="fade-up">
+        <div class="p-6 grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-lg font-semibold">{{ formatTime(schedule.departureTime) }}</p>
+            <p appAutoTranslate class="text-sm text-[#444444] dark:text-[#666666]">Departure</p>
+            <p class="flex items-start justify-start gap-2 text-xl md:text-2xl  font-bold"><span class="text-sm text-teal-500">From: </span>{{ schedule.route.departureCity }}</p>
+          </div>
+          <div>
+            <p class="text-lg font-semibold">{{ formatTime(schedule.arrivalTime) }}</p>
+            <p appAutoTranslate class="text-sm text-[#444444] dark:text-[#666666]">Arrival</p>
+            <p class="flex items-start justify-start gap-2 text-xl md:text-2xl font-bold"><span class="text-sm text-teal-500">To: </span> {{ schedule.route.arrivalCity }}</p>
+          </div>
+          <div>
+            <p appAutoTranslate class="text-sm text-[#444444] dark:text-[#666666]">Duration</p>
+            <p class="text-sm">{{ formatDuration(schedule.duration) }}</p>
+          </div>
+          <div class="price flex flex-col">
+            <span class="text-sm font-semibold">Price</span>
+            <div class="flex items-center">
+              <span class="text-lg" [ngClass]="{'text-green-600 font-bold': schedule.discountPercentage && schedule.discountPercentage > 0}">
+                {{ formatPrice(schedule.schedulePrice) }} MAD
+              </span>
+              <ng-container *ngIf="schedule.discountPercentage && schedule.discountPercentage > 0">
+                <span class="ml-2 text-sm text-green-600 italic">
+                  -{{ (schedule.discountPercentage || 0).toFixed(0) }}% OFF
+                </span>
+              </ng-container>
+            </div>
+            <ng-container *ngIf="schedule.discountPercentage && schedule.discountPercentage > 0">
+            <span class="text-sm text-[#555555] line-through">
+              {{ formatPrice(schedule.originalPrice || 0) }} MAD
+            </span>
+            </ng-container>
+          </div>
+          <div class="flex justify-end col-span-2">
+            <button
+              [disabled]="!isScheduleAvailable(schedule)"
+              (click)="bookSchedule(schedule)"
+              class="w-32 bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300"
+              [ngClass]="{'opacity-50 cursor-not-allowed': !isScheduleAvailable(schedule)}">
+              {{ isScheduleAvailable(schedule) ? 'Book Now' : 'Unavailable' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+        <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+      </div>
+
+      <!-- Error message -->
+      <app-message [message]="message" [type]="messageType"></app-message>
+
+
+      <!-- No routes found message -->
+      <div *ngIf="searchPerformed && noRoutesFound" data-aos="fade-left" class="mt-8 text-center">
+        <p>No routes found for the selected cities and date.</p>
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>
+
+<!-- Map Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" data-aos="fade" *ngIf="isMapModalOpen">
+  <div class="bg-white dark:bg-[#222222] w-4/5 h-4/5 rounded-lg overflow-hidden shadow-xl" data-aos="zoom-in">
+    <div class="relative w-full h-full">
+      <app-morocco-map
+        (citiesSelected)="onCitiesSelected($event)"
+        (closeModal)="closeMapModal()"
+        (searchRoutes)="onSearchRoutes()">
+      </app-morocco-map>
+      <button (click)="closeMapModal()" class="absolute top-4 right-4 text-[#555555] hover:text-[#333333]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+</div>

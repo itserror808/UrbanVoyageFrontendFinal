@@ -1,0 +1,11 @@
+<div *ngIf="message" class="message-wrapper">
+  <div class="message-container dark:border-[1px] dark:border-gray-500 border-opacity-0 dark:border-opacity-10 bg-white dark:bg-darkBackground text-black dark:text-white rounded-md shadow-md"
+       [ngClass]="{'border-success': type === 'success', 'border-error': type === 'error'}"
+       data-aos="fade-left">
+    <div class="message-content">
+      <i (click)="closeMessage()" class="bx bx-x cursor-pointer"></i>
+      {{ message }}
+    </div>
+    <div class="moving-border"></div>
+  </div>
+</div>

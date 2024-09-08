@@ -1,0 +1,147 @@
+<div class="flex flex-col min-h-screen">
+  <app-header></app-header>
+
+  <app-message [message]="message" [type]="messageType"></app-message>
+  <div *ngIf="loading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+    <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+  </div>
+
+  <!-- Register Page -->
+  <div class="flex flex-grow items-center justify-center mx-auto space-y-6 p-4 text-lightText dark:text-darkText w-full bg-lightBackground dark:bg-darkBackground">
+    <div class="w-full mt-0 md-mt-16 md:max-w-xl px-6 py-6 rounded-lg shadow-sm bg-white dark:bg-[#333333]">
+      <div class="space-y-2 text-center">
+        <h1 class="text-3xl font-bold text-teal-500">Register</h1>
+        <p class="text-sm text-muted-foreground">Create your account to start planning your next adventure.</p>
+      </div>
+      <div class="space-y-4 mt-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="first-name">
+              First Name
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="firstName"
+              class="flex h-9 w-full rounded-md hover:border-teal-500 dark:hover:border-teal-500 duration-200 focus:border-teal-500 dark:focus:border-teal-500 border border-gray-300 dark:border-gray-500 bg-white dark:bg-[#444444] px-3 py-1 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+              id="first-name"
+              placeholder="John"
+              required
+            />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="last-name">
+              Last Name
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="lastName"
+              class="flex h-9 w-full rounded-md hover:border-teal-500 dark:hover:border-teal-500 duration-200 focus:border-teal-500 dark:focus:border-teal-500 border border-gray-300 dark:border-gray-500 bg-white dark:bg-[#444444] px-3 py-1 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+              id="last-name"
+              placeholder="Doe"
+              required
+            />
+          </div>
+        </div>
+        <div class="space-y-1">
+          <label class="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">
+            Email
+          </label>
+          <input
+            [(ngModel)]="email"
+            class="flex h-9 w-full rounded-md hover:border-teal-500 dark:hover:border-teal-500 duration-200 focus:border-teal-500 dark:focus:border-teal-500 border border-gray-300 dark:border-gray-500 bg-white dark:bg-[#444444] px-3 py-1 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+            id="email"
+            placeholder="m@example.com"
+            required
+            type="email"
+          />
+        </div>
+        <div class="space-y-1">
+          <label class="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="phoneNumber">
+            Phone
+          </label>
+          <input
+            [(ngModel)]="phoneNumber"
+            class="flex h-9 w-full rounded-md hover:border-teal-500 dark:hover:border-teal-500 duration-200 focus:border-teal-500 dark:focus:border-teal-500 border border-gray-300 dark:border-gray-500 bg-white dark:bg-[#444444] px-3 py-1 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+            id="phoneNumber"
+            placeholder="+1 (555) 555-5555"
+            required
+            type="tel"
+          />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1 relative">
+            <label class="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="password">
+              Password
+            </label>
+            <input
+              [(ngModel)]="password"
+              [type]="showPassword ? 'text' : 'password'"
+              class="flex h-9 w-full rounded-md hover:border-teal-500 dark:hover:border-teal-500 duration-200 focus:border-teal-500 dark:focus:border-teal-500 border border-gray-300 dark:border-gray-500 bg-white dark:bg-[#444444] px-3 py-1 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText pr-10"
+              id="password"
+              required
+              placeholder="Enter password"
+            />
+            <button
+              type="button"
+              class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400"
+              (click)="togglePasswordVisibility()"
+            >
+              <i class="text-lg bx" [class.bx-show]="showPassword" [class.bx-hide]="!showPassword"></i>
+            </button>
+          </div>
+          <div class="space-y-1 relative">
+            <label class="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="confirm-password">
+              Confirm Password
+            </label>
+            <input
+              [(ngModel)]="confirmPassword"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              class="flex h-9 w-full rounded-md hover:border-teal-500 dark:hover:border-teal-500 duration-200 focus:border-teal-500 dark:focus:border-teal-500 border border-gray-300 dark:border-gray-500 bg-white dark:bg-[#444444] px-3 py-1 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText pr-10"
+              id="confirm-password"
+              required
+              placeholder="Confirm password"
+            />
+            <button
+              type="button"
+              class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400"
+              (click)="toggleConfirmPasswordVisibility()"
+            >
+              <i class="text-lg bx" [class.bx-show]="showConfirmPassword" [class.bx-hide]="!showConfirmPassword"></i>
+            </button>
+          </div>
+        </div>
+
+        <button
+          (click)="register()"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 bg-teal-500 text-white hover:bg-teal-600 h-9 px-4 py-2 w-full"
+        >
+          Register
+        </button>
+
+        <p class=" text-gray-500 text-center text-xs text-muted-foreground">
+          By clicking register, you agree to our
+          <a href="#" class="underline underline-offset-4 hover:text-teal-500">Terms of Service</a> and
+          <a href="#" class="underline underline-offset-4 hover:text-teal-500">Privacy Policy</a>.
+        </p>
+        <p class="text-center text-sm text-muted-foreground">
+          Already have an account?
+
+          <a href="/login" class="text-sm text-teal-500 relative group">
+            <span class="relative">
+              Sign in
+              <span class="absolute bottom-0 left-1/2 w-0 h-[1px] bg-teal-500 group-hover:w-full transition-all duration-300 ease-out -translate-x-1/2"></span>
+            </span>
+          </a>
+        </p>
+      </div>
+      <app-verify-email
+        data-aos="fade-in"
+        *ngIf="showVerification"
+        [email]="email"
+        (verificationComplete)="onVerificationComplete()">
+      </app-verify-email>
+    </div>
+  </div>
+  <app-footer></app-footer>
+
+</div>

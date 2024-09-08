@@ -1,0 +1,126 @@
+<app-message [message]="message" [type]="messageType"></app-message>
+
+<header class="header w-full shadow-sm bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a class="flex items-center gap-2" href="/homepage">
+      <span class="text-lg font-semibold hover:text-teal-500 transition-colors duration-300">UrbanVoyage</span>
+    </a>
+    <nav class="hidden lg:flex items-center gap-8">
+      <a [routerLink]="['/homepage']"
+         [class.text-teal-500]="isActive('/homepage')"
+         class="hover:text-teal-400 transition-colors duration-300 text-sm font-medium"
+      >Home</a>
+      <a [routerLink]="['/routes']"
+         [class.text-teal-500]="isActive('/routes')"
+         class="hover:text-teal-400 transition-colors duration-300 text-sm font-medium"
+      >Book ticket</a>
+
+      <!--
+      <a appAutoTranslate [routerLink]="['/schedules']"
+         [class.text-teal-500]="isActive('/schedules')"
+         class="hover:text-teal-400 transition-colors duration-300 text-sm font-medium"
+      >Schedules</a>
+      -->
+      <a appAutoTranslate [routerLink]="['/services']"
+         [class.text-teal-500]="isActive('/services')"
+         class="hover:text-teal-400 transition-colors duration-300 text-sm font-medium"
+      >Our Services</a>
+
+      <a appAutoTranslate [routerLink]="['/contact']"
+         [class.text-teal-500]="isActive('/contact')"
+         class="hover:text-teal-400 transition-colors duration-300 text-sm font-medium"
+      >About us</a>
+
+      <a appAutoTranslate [routerLink]="['/client-space']"
+         [class.text-teal-500]="isActive('/client-space')"
+         class="hover:text-teal-400 transition-colors duration-300 text-sm font-medium"
+
+         *ngIf="isLoggedIn && (isClient || isAdmin)">Client Space</a>
+    </nav>
+    <div class="hidden lg:flex items-center gap-4">
+      <div class="flex flex-row items-center justify-center gap-2">
+        <a appAutoTranslate *ngIf="isAdmin" [routerLink]="['/backoffice']" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">Back office</a>
+
+        <button   *ngIf="isLoggedIn" (click)="logout()"  class="inline-flex border-none items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300">
+          <p appAutoTranslate >Logout</p>
+          <!--<i class='bx bx-log-out text-xl rotate-180'></i> -->
+        </button>
+
+        <a  appAutoTranslate *ngIf="!isLoggedIn" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300"
+           href="/login">
+          Log In
+        </a>
+        <a appAutoTranslate *ngIf="!isLoggedIn" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300"
+           href="/register">
+          Sign Up
+        </a>
+      </div>
+
+
+
+    </div>
+
+    <button
+      (click)="toggleSidebar()"
+      class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 lg:hidden bg-transparent"
+      type="button"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="isSidebarOpen"
+      aria-controls="mobile-menu"
+    >
+      <span class="sr-only">Open main menu</span>
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 z-40 bg-black bg-opacity-25 lg:hidden"
+    (click)="closeSidebar()"
+  ></div>
+
+  <nav
+    id="mobile-menu"
+    class="fixed top-0 right-0 bottom-0 w-full bg-white dark:bg-darkBackground text-lightText dark:text-darkText z-50 transform transition-transform duration-300 ease-in-out translate-x-full "
+    [ngClass]="{
+      'translate-x-0': isSidebarOpen,
+      'translate-x-full': !isSidebarOpen
+    }"
+  >
+    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <span class="text-lg text-teal-500 font-semibold">Menu</span>
+      <button (click)="closeSidebar()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-4">
+      <a appAutoTranslate class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/homepage" (click)="closeSidebar()">Home</a>
+      <a appAutoTranslate class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/routes" (click)="closeSidebar()">Book ticket</a>
+      <!-- <a appAutoTranslate class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/schedules" (click)="closeSidebar()">Schedules</a> -->
+      <a appAutoTranslate class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/services" (click)="closeSidebar()">Our Services</a>
+      <a appAutoTranslate class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/contact" (click)="closeSidebar()">About us</a>
+      <a appAutoTranslate *ngIf="isLoggedIn && (isClient || isAdmin)"   class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/client-space" (click)="closeSidebar()">Client space</a>
+      <a appAutoTranslate *ngIf="isAdmin" [routerLink]="['/backoffice']" class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" (click)="closeSidebar()">Back office</a>
+      <a appAutoTranslate *ngIf="!isLoggedIn" class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/login" (click)="closeSidebar()">Log In</a>
+      <a appAutoTranslate *ngIf="!isLoggedIn" class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" href="/register" (click)="closeSidebar()">Sign Up</a>
+      <button appAutoTranslate *ngIf="isLoggedIn" class="block py-2 text-md font-medium hover:text-teal-500 transition-colors" (click)="closelogout()">Log out</button>
+      <div class="flex flex-row gap-2 items-center justify-center">
+        <app-dark-mode-toggle></app-dark-mode-toggle>
+        <a href="#instagram" class="text-xl text-lightText dark:text-darkText hover:text-teal-500 dark:hover:text-teal-500 transition-colors duration-200">
+          <i class="bx bxl-instagram"></i>
+        </a>
+        <a href="#facebook" class="text-xl text-lightText dark:text-darkText hover:text-teal-500 dark:hover:text-teal-500 transition-colors duration-200">
+          <i class='bx bxl-meta'></i>
+        </a>
+
+      </div>
+    </div>
+  </nav>
+
+
+</header>

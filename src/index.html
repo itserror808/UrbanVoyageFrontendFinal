@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <style>
+    .dark-mode-preload { display: none; }
+  </style>
+  <script>
+    (function() {
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+  <meta charset="utf-8">
+  <title>Loading</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDjOf_9XM-mSZ9h4Hv9ukO5YCCBIrxIHc"></script>
+
+
+
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

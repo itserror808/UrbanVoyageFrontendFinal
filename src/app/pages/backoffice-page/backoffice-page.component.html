@@ -1,0 +1,692 @@
+<div class="flex flex-col h-screen ">
+  <app-message [message]="message" [type]="messageType" (close)="closeMessage()"></app-message>
+
+
+  <app-header></app-header>
+
+
+  <div class="flex flex-col md:flex-row flex-grow text-lightText dark:text-darkText bg-lightBackground dark:bg-darkBackground">
+    <!-- Sidebar -->
+    <div class="w-full md:w-1/6 bg-lightBgColor dark:bg-darkBgColor p-4 transition-all duration-200">
+      <nav>
+        <ul class="w-full flex flex-row md:flex-col items-center justify-around md:items-start md:justify-start">
+          <li *ngFor="let tab of tabs"
+              (click)="setActiveTab(tab)"
+              data-aos="fade-right"
+              class="mb-2 p-2 cursor-pointer rounded flex items-center hover:text-teal-500 duration-200"
+              [ngClass]="{'bg-lightAccent dark:bg-darkAccent': activeTab === tab}">
+            <i class="material-icons mr-2 md:mr-4 text-3xl md:text-2xl relative">
+              {{getTabIcon(tab)}}
+              <span *ngIf="tab === 'messages' && unreadMessageCount > 0"
+                    class="absolute top-0 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+          {{ unreadMessageCount }}
+        </span>
+            </i>
+            <span class="hidden md:inline">{{ tab | titlecase }}</span>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="w-full p-4 md:p-8" data-aos="fade-left">
+      <div *ngIf="activeTab === 'routes'" class="flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4">Manage Routes</h2>
+
+        <div class="flex justify-between items-center gap-4 w-full mb-2">
+          <div class="flex flex-row items-center justify-center gap-4 w-1/2">
+            <input [(ngModel)]="searchDepartureCity" (input)="onSearch()" placeholder="Search Departure City" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText">
+            <input [(ngModel)]="searchArrivalCity" (input)="onSearch()" placeholder="Search Arrival City" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText">
+          </div>
+          <button (click)="createAllRoutes()" class=" w-64 h-10 bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors disabled:opacity-50 duration-300">Create all routes</button>
+
+        </div>
+
+        <div class="flex-grow overflow-auto">
+          <div class="">
+
+            <div class="overflow-x-auto">
+              <table class="w-full caption-bottom text-sm rounded-lg overflow-hidden">
+                <thead class="bg-gray-50 dark:bg-[#222222]">
+                <tr class="transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Route ID</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Departure City</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Arrival City</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Distance in straight line (km)</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let route of routes" class="transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">R-{{ route.routeID }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ route.departureCity }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ route.arrivalCity }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ route.distance | number:'1.0-0' }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0 w-full flex flex-row gap-2 items-center justify-center">
+                    <button (click)="openRouteEditForm(route)" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors disabled:opacity-50 duration-300">Edit</button>
+                    <button (click)="deleteRoute(route.routeID)" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500 disabled:opacity-50 duration-300">Delete</button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 md:p-8">
+          <app-custom-paginator
+            [currentPage]="currentPage"
+            [totalItems]="totalItems"
+            [itemsPerPage]="itemsPerPage"
+            (pageChange)="onPageChange($event)"
+          ></app-custom-paginator>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'schedules'" class="flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4">Manage Schedules</h2>
+
+        <div class="flex-grow overflow-auto">
+          <table class="w-full caption-bottom text-sm rounded-lg overflow-hidden">
+            <thead class="bg-gray-50 dark:bg-[#222222] sticky top-0">
+            <tr class="w-full transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+              <th class="px-4 py-2 text-left">Schedule ID</th>
+              <th class="px-4 py-2 text-left">Route</th>
+              <th class="px-4 py-2 text-left">Departure Time</th>
+              <th class="px-4 py-2 text-left">Arrival Time</th>
+              <th class="px-4 py-2 text-left">Available Seats</th>
+              <th class="px-4 py-2 text-left">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let schedule of paginatedSchedules" class="transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+              <td class="p-4 align-middle">S-{{ schedule.scheduleID }}</td>
+              <td class="p-4 align-middle">
+                <div class="flex items-center justify-center gap-8">
+                  {{ schedule.route.departureCity }}
+                  <i class='bx bx-sort rotate-90 text-xl text-teal-500'></i>
+                  {{ schedule.route.arrivalCity }}
+                </div>
+              </td>
+              <td class="p-4 align-middle">{{ schedule.departureTime | date:'medium' }}</td>
+              <td class="p-4 align-middle">{{ schedule.arrivalTime | date:'medium' }}</td>
+              <td class="p-4 align-middle">{{ schedule.availableSeats }}</td>
+              <td class="p-4 align-middle">
+                <div class="flex flex-row gap-2 items-center justify-center">
+                  <button (click)="openScheduleEditForm(schedule)"
+                          class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors disabled:opacity-50 duration-300">
+                    Edit
+                  </button>
+                  <button (click)="deleteSchedule(schedule.scheduleID)"
+                          class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500 disabled:opacity-50 duration-300">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4">
+          <app-custom-paginator
+            [currentPage]="currentPage"
+            [totalItems]="schedules.length"
+            [itemsPerPage]="itemsPerPage"
+            (pageChange)="onPageChange($event)"
+          ></app-custom-paginator>
+        </div>
+      </div>
+
+      <!-- Reservations Tab -->
+      <div *ngIf="activeTab === 'reservations'" class="flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4">Manage Reservations</h2>
+
+        <div class="flex-grow overflow-auto">
+          <table class="w-full caption-bottom text-sm rounded-lg overflow-hidden">
+            <thead class="bg-gray-50 dark:bg-[#222222] sticky top-0">
+            <tr class="w-full h-10 transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+              <th class="px-4 py-2">Reservation ID</th>
+              <th class="px-4 py-2">User ID</th>
+              <th class="px-4 py-2">User</th>
+              <th class="px-4 py-2">Route</th>
+              <th class="px-4 py-2">Reservation Date</th>
+              <th class="px-4 py-2">Status</th>
+              <th class="px-4 py-2">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let reservation of paginatedReservations" class="transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+              <td class="p-4 align-middle">{{ reservation.reservationID }}</td>
+              <td class="p-4 align-middle">{{ reservation.user.userID }}</td>
+              <td class="p-4 align-middle">{{ reservation.user.username }}</td>
+              <td class="p-4 align-middle">
+                <div class="flex items-center justify-center gap-8">
+                  {{ reservation.route.departureCity }}
+                  <i class='bx bx-sort rotate-90 text-xl text-teal-500'></i>
+                  {{ reservation.route.arrivalCity }}
+                </div>
+              </td>
+              <td class="p-4 align-middle">{{ reservation.reservationDate | date:'mediumDate' }}</td>
+              <td class="p-4 align-middle">
+                <div class="flex justify-center items-center">
+              <span class="inline-flex items-center justify-center rounded-md px-2 py-1 font-medium text-white shadow transition-colors disabled:opacity-50 duration-300"
+                    [ngClass]="{
+                      'bg-green-600 dark:bg-green-700': reservation.status === 'CONFIRMED' || reservation.status === 'REFUNDED',
+                      'bg-yellow-600 dark:bg-yellow-700': reservation.status === 'PENDING' || reservation.status === 'REFUND_REQUESTED',
+                      'bg-red-600 dark:bg-red-700': reservation.status === 'CANCELLED' || reservation.status === 'REFUND_REJECTED'
+                    }">
+                <i class='bx mr-1'
+                   [ngClass]="{
+                     'bx-check': reservation.status === 'CONFIRMED' || reservation.status === 'REFUNDED',
+                     'bx-time-five': reservation.status === 'PENDING' || reservation.status === 'REFUND_REQUESTED',
+                     'bx-x': reservation.status === 'CANCELLED' || reservation.status === 'REFUND_REJECTED'
+                   }"></i>
+                {{ reservation.status }}
+              </span>
+                </div>
+              </td>
+              <td class="p-4 align-middle">
+                <div class="flex flex-row gap-2 items-center justify-center">
+                  <ng-container [ngSwitch]="reservation.status">
+                    <button *ngSwitchCase="'PENDING'"
+                            (click)="updateReservationStatus(reservation, 'CONFIRMED')"
+                            class="bg-green-600 hover:bg-green-700 inline-flex items-center justify-center rounded-md px-4 py-1 text-sm font-medium text-white dark:text-darkText shadow transition-colors disabled:opacity-50 duration-300">
+                      Confirm
+                    </button>
+                    <button *ngSwitchCase="'CONFIRMED'"
+                            (click)="updateReservationStatus(reservation, 'CANCELLED')"
+                            class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-1 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-red-500 dark:hover:text-red-600 disabled:opacity-50 duration-300">
+                      Cancel
+                    </button>
+                    <span class="text-gray-500" *ngSwitchCase="'CANCELLED'">Cancelled</span>
+                  </ng-container>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4">
+          <app-custom-paginator
+            [currentPage]="currentPage"
+            [totalItems]="reservations.length"
+            [itemsPerPage]="itemsPerPage"
+            (pageChange)="onPageChange($event)"
+          ></app-custom-paginator>
+        </div>
+      </div>
+
+
+
+      <div *ngIf="activeTab === 'refunds'" class="flex flex-col min-h-full">
+        <h2 class="text-xl font-bold mb-4">Manage Refund Requests</h2>
+
+        <div class="flex-grow overflow-auto">
+          <div class="">
+            <div class="overflow-x-auto">
+              <table class="w-full caption-bottom text-sm rounded-lg overflow-hidden">
+                <thead class="bg-gray-50 dark:bg-[#222222]">
+                <tr class="w-full h-10 transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+                  <th class="px-4 py-2">Request ID</th>
+                  <th class="px-4 py-2">Passenger</th>
+                  <th class="px-4 py-2">Reservation ID</th>
+                  <th class="px-4 py-2">Request Date</th>
+                  <th class="px-4 py-2">Motif</th>
+                  <th class="px-4 py-2">Status</th>
+                  <th class="px-4 py-2">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let request of paginatedRefundRequests" class="transition-colors hover:bg-[#CCCCCC] dark:hover:bg-[#444444]">
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">Req-{{ request.id }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ request.passengerName }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ request.reservationId }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ request.requestDate | date:'mediumDate' }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">{{ request.motif }}</td>
+                  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                    <div class="flex justify-center items-center">
+                  <span class="inline-flex items-center justify-center rounded-md px-2 py-1 font-medium text-white shadow transition-colors disabled:opacity-50 duration-300" [ngClass]="{
+                    'bg-yellow-600 dark:bg-yellow-700 ': request.status === 'PENDING',
+                    'bg-green-600 dark:bg-green-700 ': request.status === 'APPROVED',
+                    'bg-red-600 dark:bg-red-700 ': request.status === 'REJECTED'
+                  }">
+                    <ng-container *ngIf="request.status === 'PENDING'">
+                      <i class='bx bx-time-five mr-1'></i>
+                    </ng-container>
+                    <ng-container *ngIf="request.status === 'APPROVED'">
+                      <i class='bx bx-check mr-1'></i>
+                    </ng-container>
+                    <ng-container *ngIf="request.status === 'REJECTED'">
+                      <i class='bx bx-x mr-1'></i>
+                    </ng-container>
+                    <span>
+                      {{ request.status }}
+                    </span>
+                  </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-2">
+                    <div class="flex flex-row gap-2 items-center justify-center">
+                      <button *ngIf="request.status === 'PENDING'"
+                              (click)="rejectRefund(request)"
+                              class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-1 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-red-500 dark:hover:text-red-600 disabled:opacity-50 duration-300">
+                        Reject
+                      </button>
+                      <button *ngIf="request.status === 'PENDING'"
+                              (click)="approveRefund(request)"
+                              class="bg-green-600 hover:bg-green-700 inline-flex items-center justify-center rounded-md px-4 py-1 text-sm font-medium text-white dark:text-darkText shadow transition-colors disabled:opacity-50 duration-300">
+                        Approve
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 md:p-8">
+          <app-custom-paginator
+            [currentPage]="currentPage"
+            [totalItems]="refundRequests.length"
+            [itemsPerPage]="itemsPerPage"
+            (pageChange)="onPageChange($event)"
+          ></app-custom-paginator>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'website'" class="container mx-auto px-4 py-8">
+        <div>
+          <h1 id="homepagedestinationmanagement" class="text-3xl font-bold mb-6 text-lightText dark:text-darkText">Homepage Destination Management</h1>
+          <!-- Add/Edit Form -->
+          <form (ngSubmit)="onSubmit()" class="mb-8 bg-white dark:bg-[#222222] shadow-md rounded-lg px-8 pt-6 pb-8">
+            <input type="hidden" [(ngModel)]="currentDestination.id" name="id">
+            <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="title">
+                Title
+              </label>
+              <input class="flex h-10 w-full md:w-1/2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+                     id="title" type="text" [(ngModel)]="currentDestination.title" name="title" placeholder="Title">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="description">
+                Description
+              </label>
+              <textarea class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+                        id="description" [(ngModel)]="currentDestination.description" name="description" placeholder="Description" rows="4"></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="image">
+                Image
+              </label>
+              <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
+                <div class="space-y-1 text-center">
+                  <div class="flex justify-center items-center">
+                    <svg *ngIf="!this.selectedFile" class="mx-auto h-24 w-24 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div *ngIf="this.selectedFile" class="relative">
+                      <img [src]="this.selectedFilePreview" class="max-h-48 max-w-48 object-cover rounded-md m-4">
+                      <button (click)="removeFileSelected(this.selectedFile)" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600 focus:outline-none">
+                        <span class="sr-only">Remove file</span>
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex text-sm text-gray-600 dark:text-gray-400 justify-center mt-4">
+                    <label for="image" class="relative cursor-pointer bg-white dark:bg-[#333333] rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                      <span class="px-3 py-2">Upload a file</span>
+                      <input id="image" name="image" type="file" class="sr-only" (change)="onFileSelected($event)">
+                    </label>
+                    <p class="pl-1 self-center">or drag and drop</p>
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-end">
+              <button *ngIf="currentDestination.id" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300"
+                      type="button" (click)="resetForm()">
+                Cancel
+              </button>
+              <button class="bg-teal-600 w-64 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300"
+                      type="submit">
+                {{ currentDestination.id ? 'Save' : 'Add Destination' }}
+              </button>
+
+            </div>
+          </form>
+
+          <!-- Destinations List -->
+          <div class="mb-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div *ngFor="let destination of destinations" class="bg-white dark:bg-[#222222] rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105">
+                <img [src]="destination.imageUrl" alt="{{ destination.title }}" class="w-full h-48 object-cover">
+                <div class="p-4">
+                  <h3 class="text-lg font-semibold text-lightText dark:text-darkText mb-2">{{ destination.title }}</h3>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    {{ destination.description.length > 100 ? (destination.description | slice:0:100) + '...' : destination.description }}
+                  </p>
+                  <div class="flex justify-between items-center">
+                    <button (click)="editDestination(destination)"
+                            class="text-sm font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-300">
+                      Edit
+                    </button>
+                    <button (click)="deleteDestination(destination.id)"
+                            class="text-sm font-medium text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-300">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="w-full grow mx-auto bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
+          <div class="w-full flex flex-col gap-8">
+            <div class="mb-4">
+              <h2 class="text-2xl font-bold" id="sponsor-management">Sponsor Management</h2>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Add and manage sponsors for your platform.</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8 w-full">
+              <div class="w-full md:w-1/3">
+                <div class="rounded-lg bg-white dark:bg-[#222222] text-card-foreground shadow-sm" data-aos="fade-up">
+                  <div class="flex flex-col space-y-1.5 p-6">
+                    <h3 class="text-2xl font-semibold">{{editingSponsor ? 'Edit Sponsor' : 'Add New Sponsor'}}</h3>
+                  </div>
+                  <div class="p-6">
+                    <form (ngSubmit)="addOrUpdateSponsor()" class="space-y-4">
+                      <div class="space-y-2">
+                        <label for="name" class="text-sm font-medium">Sponsor Name</label>
+                        <input [(ngModel)]="newSponsor.name" name="name" id="name" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText" placeholder="Enter sponsor name" required>
+                      </div>
+                      <div class="space-y-2">
+                        <label for="imageUrl" class="text-sm font-medium">Image URL</label>
+                        <input [(ngModel)]="newSponsor.imageUrl" name="imageUrl" id="imageUrl" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText" placeholder="Enter image URL" required>
+                      </div>
+                      <div class="space-y-2">
+                        <label for="website" class="text-sm font-medium">Website</label>
+                        <input [(ngModel)]="newSponsor.website" name="website" id="website" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText" placeholder="Enter website URL" required>
+                      </div>
+                      <button [disabled]="sponsorLoading" type="submit" class="flex items-center justify-center gap-2 w-full px-4 py-2 text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50">
+                        <div *ngIf="sponsorLoading" class="animate-spin rounded-full border-4 border-teal-500 border-t-transparent h-4 w-4"></div>
+                        {{editingSponsor ? 'Update' : 'Add'}} Sponsor
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w-full md:w-2/3">
+                <div class="rounded-lg bg-white dark:bg-[#222222] text-card-foreground shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                  <div class="flex flex-col space-y-1.5 p-6">
+                    <h3 class="text-2xl font-semibold">Current Sponsors</h3>
+                  </div>
+                  <div class="p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div *ngFor="let sponsor of sponsors" class="flex flex-col p-4 bg-[#EEEEEE] dark:bg-[#333333] rounded-md">
+                        <div class="flex flex-col items-center justify-center space-x-4 mb-4">
+                          <img [src]="sponsor.imageUrl" [alt]="sponsor.name" class="w-36 h-36 object-contain bg-transparent shadawi">
+                          <div>
+                            <span class="font-medium">{{ sponsor.name }}</span>
+                            <a [href]="sponsor.website" target="_blank" class="text-sm text-teal-600 dark:text-teal-400 hover:underline block">{{ sponsor.website }}</a>
+                          </div>
+                        </div>
+                        <div class="flex space-x-2 mt-auto">
+                          <button (click)="updateSponsor(sponsor)" class="flex-1 px-3 py-1 text-sm text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50">
+                            Edit
+                          </button>
+                          <button (click)="deleteSponsor(sponsor.id!)" class="flex-1 px-3 py-1 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="w-full grow mx-auto bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText mt-16">
+          <div class="mb-4">
+            <h2 class="text-2xl font-bold" id="faq-management">FAQ Management</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Add and manage frequently asked questions for your platform.</p>
+          </div>
+
+          <div class="w-full flex flex-col md:flex-row gap-8">
+            <div class="w-full md:w-1/3 rounded-lg bg-white dark:bg-[#222222] text-card-foreground shadow-sm" data-aos="fade-up">
+              <div class="flex flex-col space-y-1.5 p-6">
+                <h3 class="text-2xl font-semibold">{{editingFAQ ? 'Edit FAQ' : 'Add New FAQ'}}</h3>
+              </div>
+              <div class="p-6">
+                <form (ngSubmit)="addOrUpdateFAQ()" class="space-y-4">
+                  <div class="space-y-2">
+                    <label for="question" class="text-sm font-medium">Question</label>
+                    <input [(ngModel)]="newFAQ.question" name="question" id="question" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText" placeholder="Enter question" required>
+                  </div>
+                  <div class="space-y-2">
+                    <label for="answer" class="text-sm font-medium">Answer</label>
+                    <textarea [(ngModel)]="newFAQ.answer" name="answer" id="answer" rows="4" class="flex w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#333333] px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText" placeholder="Enter answer" required></textarea>
+                  </div>
+                  <button [disabled]="faqLoading" type="submit" class="flex items-center justify-center gap-2 w-full px-4 py-2 text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50">
+                    <div *ngIf="faqLoading" class="animate-spin rounded-full border-4 border-teal-500 border-t-transparent h-4 w-4"></div>
+                    {{editingFAQ ? 'Update' : 'Add'}} Question
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="w-full md:w-2/3 rounded-lg bg-white dark:bg-[#222222] text-card-foreground shadow-sm" data-aos="fade-left" data-aos-delay="100">
+              <div class="flex flex-col space-y-1.5 p-6">
+                <h3 class="text-2xl font-semibold">Current FAQs</h3>
+              </div>
+              <div class="p-6">
+                <div class="space-y-4">
+                  <div *ngFor="let faq of faqs" class="bg-[#EEEEEE] dark:bg-[#333333] rounded-md p-4">
+                    <div class="flex justify-between items-center">
+                      <h4 class="text-lg font-medium">{{ faq.question }}</h4>
+                      <div class="space-x-2">
+                        <button (click)="startEditingFAQ(faq)" class="px-3 py-1 text-sm text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50">
+                          Edit
+                        </button>
+                        <button (click)="deleteFAQ(faq.id!)" class="px-3 py-1 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    <p class="mt-2 text-sm italic text-gray-600 dark:text-gray-400">{{ faq.answer }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+
+
+
+
+
+      <div *ngIf="activeTab === 'messages'" class="flex flex-col min-h-full">
+        <h2 class="text-xl font-bold mb-4">Contact Messages</h2>
+
+        <div class="flex-grow overflow-auto p-6 bg-[#DDDDDD] dark:bg-[#333333] rounded-xl">
+          <ng-container *ngIf="paginatedContactMessages.length > 0; else noMessages">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <ng-container *ngFor="let message of paginatedContactMessages">
+                <div
+                  class="bg-white dark:bg-[#222222] rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:scale-110 duration-300 relative"
+                  data-aos="fade-up"
+                  [ngClass]="{'border-l-4 border-red-500': !message.read}"
+                >
+                  <div *ngIf="!message.read" class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                      <h3 class="text-lg font-semibold text-teal-500 dark:text-teal-500">{{ message.fullName }}</h3>
+                      <span class="text-sm text-gray-500 dark:text-gray-400">{{ message.createdAt | date:'short' }}</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-2">{{ message.email }}</p>
+                    <p class="text-gray-700 dark:text-gray-200 mb-4 line-clamp-3">{{ message.message }}</p>
+                    <div class="flex justify-between items-center">
+                      <button (click)="openMessageDetails(message)" class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 text-sm font-medium transition-colors duration-300">
+                        Read More
+                      </button>
+                      <button (click)="deleteContactMessage(message.id)" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors duration-300">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+
+          <ng-template #noMessages>
+            <div class="flex items-center justify-center h-full">
+              <p class="text-gray-600 dark:text-gray-400 text-lg">There are no received messages.</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="mt-4">
+          <app-custom-paginator
+            [currentPage]="contactCurrentPage"
+            [totalItems]="contactTotalItems"
+            [itemsPerPage]="contactItemsPerPage"
+            (pageChange)="onContactPageChange($event)"
+          ></app-custom-paginator>
+        </div>
+      </div>
+
+
+
+
+      <!--
+      <div *ngIf="activeTab === 'statistics'" class="flex flex-col min-h-full">
+        <h2 class="text-xl font-bold mb-4">Statistics</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="w-full">
+            <h3 class="text-lg font-semibold mb-2">Users and Passengers</h3>
+            <canvas id="userChart"></canvas>
+          </div>
+          <div class="w-full">
+            <h3 class="text-lg font-semibold mb-2">Reservations per Month</h3>
+            <canvas id="reservationChart"></canvas>
+          </div>
+        </div>
+      </div>
+      -->
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- ... (keep existing content) -->
+
+<!-- Route Edit Modal -->
+<div data-aos="fade" *ngIf="isEditingRoute" class="fixed inset-0 z-50 overflow-auto bg-white dark:bg-darkBackground bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+  <div data-aos="zoom-in" data-aos-duration="400" class="relative bg-white dark:bg-[#222222] w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 rounded-lg shadow-lg p-6">
+    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Edit Route</h3>
+    <div class="mb-4">
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="departureCity">
+        Departure City
+      </label>
+      <select [(ngModel)]="editingRoute!.departureCity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline">
+        <option *ngFor="let location of locations" [value]="location.name">{{location.name}}</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="arrivalCity">
+        Arrival City
+      </label>
+      <select [(ngModel)]="editingRoute!.arrivalCity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline">
+        <option *ngFor="let location of locations" [value]="location.name">{{location.name}}</option>
+      </select>
+    </div>
+    <div class="flex items-center justify-end gap-2">
+      <button (click)="updateRoute()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+        Save
+      </button>
+      <button (click)="closeRouteEditForm()" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule Edit Modal -->
+<div  *ngIf="isEditingSchedule" class="fixed inset-0 z-50 overflow-auto bg-white dark:bg-darkBackground bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm flex items-center justify-center" data-aos="fade">
+  <div  data-aos="zoom-in" data-aos-duration="400" class="relative bg-white dark:bg-[#222222] w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 rounded-lg shadow-lg p-6">
+    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Edit Schedule</h3>
+    <div class="mb-4">
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="route">
+        Route
+      </label>
+      <select [(ngModel)]="editingSchedule!.route.routeID" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline">
+        <option *ngFor="let route of paginatedRoutes" [value]="route.routeID">{{route.departureCity}} - {{route.arrivalCity}}</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="departureTime">
+        Departure Time
+      </label>
+      <input [(ngModel)]="editingSchedule!.departureTime" type="datetime-local" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="arrivalTime">
+        Available Seats
+      </label>
+      <input [(ngModel)]="editingSchedule!.availableSeats" type="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#333333] leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="flex items-center justify-end gap-2">
+      <button (click)="updateSchedule()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+        Save
+      </button>
+      <button (click)="closeScheduleEditForm()" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="selectedMessage" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-sm z-50" data-aos="fade">
+  <div class="bg-white dark:bg-[#222222] rounded-lg p-6 max-w-3xl w-full h-auto mx-4" data-aos="zoom-in" data-aos-delay="200">
+    <h3 class="text-xl font-semibold mb-2 text-teal-500 dark:text-teal-500"> <span class="text-sm font-normal italic text-[#999999]">From:</span> {{ selectedMessage.fullName }}</h3>
+    <p class="text-gray-600 dark:text-gray-300 mb-2">{{ selectedMessage.email }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ selectedMessage.createdAt | date:'medium' }}</p>
+    <textarea class="text-gray-700 dark:text-gray-200 mb-6 w-full bg-transparent border-none h-32" readonly>{{ selectedMessage.message }}</textarea>
+    <div class="flex justify-end">
+      <button (click)="closeMessageDetails()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors disabled:opacity-50 duration-300">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div *ngIf="loading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+</div>

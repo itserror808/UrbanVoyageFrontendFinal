@@ -1,0 +1,343 @@
+<div appCursorGlow>
+  <app-header></app-header>
+</div>
+
+<div class="flex flex-col w-full min-h-screen">
+  <main class="flex-1">
+    <section class="w-full h-[700px] bg-cover bg-center relative"
+             [ngStyle]="{'background-image': 'url(' + backgroundImage + ')'}"
+             [class.opacity-0]="isLoadingImage"
+             [class.transition-opacity]="true"
+             [class.duration-300]="true">
+
+
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center space-y-6 relative z-10">
+        <div class="space-y-4" data-aos="fade-up">
+          <h1 id="urbanvoyage" class="text-6xl font-bold tracking-tighter text-teal-500 sm:text-5xl lg:text-6xl xl:text-8xl">UrbanVoyage</h1>
+          <h2 id="experience-seamless-autocar-travel" class="text-4xl font-bold tracking-tighter text-white sm:text-5xl lg:text-6xl xl:text-7xl" appAutoTranslate>Experience Seamless Autocar Travel</h2>
+          <p class="text-white">Discover comfort, convenience, and affordability with Urban Voyage. Your journey begins here.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4" data-aos="fade-up">
+          <a routerLink="/routes" class="inline-flex h-12 items-center justify-center rounded-md bg-teal-600 px-6 text-base sm:text-lg font-medium text-white shadow transition-all hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 duration-300" appAutoTranslate>Book Your Trip Now</a>
+          <a routerLink="/services" class="explore-services-btn inline-flex h-12 items-center justify-center rounded-md border-2 border-white px-6 text-base sm:text-lg font-medium text-white shadow transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 duration-300" appAutoTranslate>Explore Our Services</a>
+        </div>
+      </div>
+
+
+      <!-- Edit Image Icon for Admins -->
+      <button *ngIf="isAdmin" (click)="editImage()" class="absolute bottom-4 right-4 bg-white bg-opacity-70 hover:bg-opacity-100 text-[#222222] rounded-full p-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-teal-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+      </button>
+    </section>
+
+
+    <div class="relative w-full h-px overflow-hidden bg-gray-200 dark:bg-gray-800">
+      <div class="absolute inset-0 w-1/4 bg-gradient-to-r from-transparent via-teal-500 to-transparent dark:via-teal-400 animate-slide-lr"></div>
+    </div>
+
+
+    <!-- Image Upload Modal -->
+    <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-aos="fade">
+      <div class="bg-white dark:bg-[#222222] p-6 rounded-lg shadow-xl sm:max-w-[480px] w-full relative" data-aos="zoom-in">
+        <!-- Loading Spinner -->
+        <div *ngIf="isLoading" class="fixed top-0 left-0 w-full h-full flex rounded-lg items-center justify-center bg-gray-500 bg-opacity-20 backdrop-blur-lg z-50">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-[#111111] dark:text-white">Upload Photo</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Add a new photo to your profile. Supported formats are PNG, JPG, and GIF up to 10MB.</p>
+        </div>
+        <div class="space-y-4">
+          <div class="grid gap-2">
+            <label class="text-sm font-medium leading-none text-[#333333] dark:text-gray-300 peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="photo">
+              Photo
+            </label>
+            <div class="flex items-center gap-2">
+              <div class="flex text-sm text-gray-600 dark:text-gray-400 justify-start gap-2 w-full">
+                <label for="photo" class="relative cursor-pointer bg-white dark:bg-[#333333] rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500">
+                  <span class="px-3 py-2">Upload a file</span>
+                  <input id="photo" name="photo" type="file" class="sr-only" (change)="onFileSelected($event)" accept="image/*">
+                </label>
+                <p class="pl-1 self-center">
+                  {{ selectedFileName ? selectedFileName : 'or drag and drop' }}
+                </p>
+              </div>
+              <button (click)="resetFileInput()" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:text-teal-500 dark:hover:text-teal-500 h-10 w-10 text-[#333333] dark:text-gray-300">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-4 w-4"
+                >
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+                <span class="sr-only">Reset</span>
+              </button>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              PNG, JPG, GIF up to 10MB
+            </p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex justify-end ">
+            <button [disabled]="isLoading" (click)="closeModal()" class=" inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300">
+              Cancel
+            </button>
+            <button
+              [disabled]="isLoading"
+              (click)="truncateBackgroundImages()"
+              class=" inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText shadow-sm transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300"
+            >
+              Reset background
+            </button>
+            <button
+              [disabled]="isLoading"
+              (click)="uploadImage()"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-teal-600 text-white hover:shadow-glow h-10 px-4 py-2"
+              type="submit"
+            >
+              Upload
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="w-full py-16 md:py-24 lg:py-32 bg-gray-100 dark:bg-[#222222]">
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center" data-aos="fade-up">
+          <div class="space-y-2">
+            <div appAutoTranslate class="inline-block rounded-lg bg-teal-600 px-3 py-1 text-sm text-white font-semibold">Why Choose Us</div>
+            <h2 appAutoTranslate class="text-3xl font-bold tracking-tighter text-lightText dark:text-darkText sm:text-4xl lg:text-5xl">Redefining Autocar Travel</h2>
+            <p appAutoTranslate  class="max-w-2xl mx-auto text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl">
+              Urban Voyage is revolutionizing the way you travel. With our cutting-edge technology and customer-centric approach, we offer an unparalleled autocar experience.
+            </p>
+          </div>
+        </div>
+        <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              <h3 appAutoTranslate class="text-xl font-bold text-lightText dark:text-darkText">Smart Booking</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Our AI-powered booking system learns your preferences to offer personalized travel recommendations and streamlined bookings.
+            </p>
+          </div>
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <h3 appAutoTranslate class="text-xl font-bold text-lightText dark:text-darkText">Live Tracking</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Track your autocar in real-time, receive instant updates on delays, and get accurate ETAs for worry-free travel planning.
+            </p>
+          </div>
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+                <path d="m9 16 2 2 4-4"></path>
+              </svg>
+              <h3 appAutoTranslate class="text-xl font-bold text-lightText dark:text-darkText">Flexible Bookings</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Life is unpredictable. Our flexible booking options allow you to change your travel plans without hefty fees or hassles.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="destinations?.length !== 0" class="w-full py-16 md:py-24 lg:py-32 bg-gray-100 dark:bg-[#222222]">
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center" data-aos="fade-up">
+          <span class="inline-block rounded-lg bg-teal-600 px-3 py-1 text-sm text-white font-semibold" appAutoTranslate>Our Destinations</span>
+          <h2 class="text-3xl font-bold tracking-tighter text-lightText dark:text-darkText sm:text-4xl lg:text-5xl" appAutoTranslate>Explore the World with Us</h2>
+          <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl">Experience the beauty of diverse destinations through the lens of our travelers.</p>
+        </div>
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <ng-container *ngFor="let destination of destinations?.slice(0, 3)">
+            <div class="relative rounded-lg overflow-hidden group shadow-lg" data-aos="fade-up">
+              <div class="relative top-10 right-10">x</div>
+              <a class="absolute inset-0 z-10" href="#">
+                <span class="sr-only">View</span>
+              </a>
+              <img
+                [src]="destination.imageUrl"
+                [alt]="destination.title"
+                class="w-full h-64 md:h-80 object-cover transition-all duration-300 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="text-lg font-bold">{{ destination.title }}</h3>
+                <p class="text-sm">{{ destination.description }}</p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="w-full py-16 md:py-24 lg:py-32 bg-white dark:bg-[#111111]">
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center" data-aos="fade-up">
+          <div class="space-y-2">
+            <div appAutoTranslate class="inline-block rounded-lg bg-teal-600 px-3 py-1 text-sm text-white font-semibold">Benefits</div>
+            <h2 appAutoTranslate class="text-3xl font-bold tracking-tighter text-lightText dark:text-darkText sm:text-4xl lg:text-5xl">Why Travel with Urban Voyage?</h2>
+            <p appAutoTranslate class="max-w-2xl mx-auto text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl">
+              Experience a new standard of autocar travel that combines comfort, affordability, and sustainability.
+            </p>
+          </div>
+        </div>
+        <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <line x1="12" x2="12" y1="2" y2="22"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              <h3 class="text-xl font-bold text-lightText dark:text-darkText">Unbeatable Value</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Enjoy premium travel experiences at budget-friendly prices. Our efficient operations mean savings for you.
+            </p>
+          </div>
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <h3 class="text-xl font-bold text-lightText dark:text-darkText">Comfort Redefined</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Our modern autocar fleet offers spacious seating, Wi-Fi, and amenities that make your journey as enjoyable as the destination.
+            </p>
+          </div>
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+              </svg>
+              <h3 class="text-xl font-bold text-lightText dark:text-darkText">Eco-Conscious Travel</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Choose a greener way to travel. Our fuel-efficient autocars and carbon offset programs help reduce your environmental impact.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="relative w-full h-px overflow-hidden bg-gray-200 dark:bg-gray-800">
+      <div class="absolute inset-0 w-1/4 bg-gradient-to-r from-transparent via-teal-500 to-transparent dark:via-teal-400 animate-slide-lr"></div>
+    </div>
+
+    <section class="w-full py-16 md:py-24 lg:py-32 bg-gray-100 dark:bg-[#222222]">
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center" data-aos="fade-up">
+          <div class="space-y-2">
+            <div appAutoTranslate class="inline-block rounded-lg bg-teal-600 px-3 py-1 text-sm text-white font-semibold">Easy Booking</div>
+            <h2 appAutoTranslate class="text-3xl font-bold tracking-tighter text-lightText dark:text-darkText sm:text-4xl lg:text-5xl">How to use UrbanVoyage?</h2>
+            <p appAutoTranslate class="max-w-2xl mx-auto text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl">
+              Book your journey in just 3 simple steps and experience hassle-free travel with UrbanVoyage.
+            </p>
+          </div>
+        </div>
+        <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <h3 appAutoTranslate class="text-xl font-bold text-lightText dark:text-darkText">1. Select Route</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Choose your departure and arrival locations from our wide network of destinations.
+            </p>
+          </div>
+          <div class="grid gap-2" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <h3 appAutoTranslate class="text-xl font-bold text-lightText dark:text-darkText">2. Book Ticket</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Reserve your seat with our easy-to-use booking system. Choose your preferred date and time.
+            </p>
+          </div>
+          <div  class="grid gap-2" data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-teal-600">
+                <path d="M6 17l2-5h8l2 5"></path>
+                <path d="M6 11l2-5h8l2 5"></path>
+              </svg>
+              <h3 appAutoTranslate class="text-xl font-bold text-lightText dark:text-darkText">3. Travel</h3>
+            </div>
+            <p appAutoTranslate class="text-gray-600 dark:text-gray-300">
+              Sit back, relax, and enjoy your comfortable journey with UrbanVoyage's modern autocar fleet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="w-full">
+      <app-sponsors></app-sponsors>
+    </section>
+
+    <section class="w-full py-16 md:py-24 lg:py-32 border-none bg-teal-600 dark:bg-teal-900 text-white">
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center" data-aos="fade-up">
+          <h2 appAutoTranslate class="text-3xl font-bold tracking-tighter sm:text-4xl lg:text-5xl">Ready to Reimagine Your Journey?</h2>
+          <p appAutoTranslate class="max-w-2xl mx-auto text-teal-100 text-base sm:text-lg lg:text-xl">
+            Join thousands of satisfied travelers who have discovered the Urban Voyage difference. Your next adventure is just a click away.
+          </p>
+          <a
+            appAutoTranslate
+            href="/routes"
+            class="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-base sm:text-lg font-medium text-teal-600 shadow transition-all duration-300 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-teal-600"
+          >
+            Book Your Trip Now
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<app-footer></app-footer>

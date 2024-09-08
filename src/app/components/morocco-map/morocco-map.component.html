@@ -1,0 +1,69 @@
+<div class="bg-white dark:bg-[#333333] relative w-full h-full flex flex-col gap-4 p-4">
+  <div class="flex justify-between items-center text-lightText dark:text-darkText z-20 relative">
+    <div class="flex gap-4">
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="departureSearch"
+          (input)="filterCities('departure')"
+          placeholder="Search departure city"
+          class="input flex h-10 w-full duration-200 rounded-md border   px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+        >
+        <div *ngIf="filteredDepartureCities.length > 0"
+             class="absolute z-50 mt-1 w-[400px] bg-white dark:bg-[#333333] border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+          <ul class="grid grid-cols-2 gap-2 p-2 max-h-60 overflow-y-auto">
+            <li *ngFor="let city of filteredDepartureCities"
+                (click)="selectCity('departure', city)"
+                class="px-4 py-2 hover:bg-[#EEEEEE] dark:hover:bg-[#444444] cursor-pointer rounded">
+              {{city.name}}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="arrivalSearch"
+          (input)="filterCities('arrival')"
+          placeholder="Search arrival city"
+          class="input flex h-10 w-full duration-200 rounded-md border   px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-darkText"
+        >
+        <div *ngIf="filteredArrivalCities.length > 0"
+             class="absolute z-50 mt-1 w-[400px] bg-white dark:bg-[#333333] border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+          <ul class="grid grid-cols-2 gap-2 p-2 max-h-60 overflow-y-auto">
+            <li *ngFor="let city of filteredArrivalCities"
+                (click)="selectCity('arrival', city)"
+                class="px-4 py-2 hover:bg-[#EEEEEE] dark:hover:bg-[#444444] cursor-pointer rounded">
+              {{city.name}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map" class="w-full flex-grow rounded-lg relative z-10"></div>
+
+  <div class="flex justify-between items-center text-lightText dark:text-darkText z-20 relative">
+    <div class="flex gap-4">
+      <div class="bg-white dark:bg-[#333333] px-4 py-2 rounded-lg">
+        From: <span class="text-teal-600 font-semibold">{{ departureCity || 'Select' }}</span>
+      </div>
+      <div class="bg-white dark:bg-[#333333] px-4 py-2 rounded-lg">
+        To: <span class="text-teal-600 font-semibold">{{ arrivalCity || 'Select' }}</span>
+      </div>
+      <div class="bg-white dark:bg-[#333333] px-4 py-2 rounded-lg" *ngIf="distance > 0">
+        Distance: <span class="text-teal-600 font-semibold">{{ distance }} km</span>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center justify-center gap-4">
+      <button (click)="closeModal.emit()" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-lightText dark:text-darkText transition-colors hover:text-teal-500 dark:hover:text-teal-500  disabled:opacity-50 duration-300">
+        Cancel
+      </button>
+      <button (click)="confirmSelection()" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors  disabled:opacity-50 duration-300">
+        Confirm Journey
+      </button>
+    </div>
+  </div>
+</div>

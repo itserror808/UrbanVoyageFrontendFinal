@@ -1,0 +1,33 @@
+<div class="flex flex-col min-h-screen">
+  <!-- success-payment.component.html -->
+
+  <!--
+  // v0 by Vercel.
+  // https://v0.dev/t/kdSo4sjJRXX
+  -->
+
+  <app-header></app-header>
+
+  <div class="flex flex-col min-h-screen">
+    <div class="flex flex-col items-center justify-center grow bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
+      <div class="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-md p-8">
+        <div class="flex flex-col items-center justify-center gap-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 size-12 animated-checkmark">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+
+          <div class="space-y-2 text-center">
+            <h2 class="text-2xl font-bold">Payment Successful</h2>
+            <p>Thank you for your purchase! Please check your email to receive your travel ticket.</p>
+          </div>
+
+          <a href="/homepage" class="bg-teal-600 hover:bg-teal-700 inline-flex items-center justify-center rounded-md dark:bg-teal-600 dark:hover:bg-teal-700 px-4 py-2 text-sm font-medium text-white dark:text-darkText shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 duration-300">
+            Back to Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

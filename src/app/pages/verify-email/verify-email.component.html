@@ -1,0 +1,31 @@
+<!-- verify-email.component.html -->
+<app-message [message]="message" [type]="messageType" (close)="closeMessage()"></app-message>
+<div *ngIf="loading" class="fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[#888888] bg-opacity-20 backdrop-blur-lg z-50">
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+</div>
+
+
+
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" data-aos="fade-in">
+  <div class="bg-white dark:bg-[#333333] text-lightText dark:text-darkText rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+    <div class="text-center text-lightText dark:text-darkText">
+      <h2 id="verify-your-email" class="text-3xl font-bold text-teal-500 tracking-tight mb-4">Verify Your Email</h2>
+      <p>We've sent a 6-digit verification code to {{this.email}} . Please enter the code below to verify your email and continue.</p>
+    </div>
+
+    <form [formGroup]="verifyForm" class="mt-6">
+      <div class="flex items-center justify-center gap-2 ">
+        <input type="text" formControlName="digit1" maxlength="1" (input)="onDigitInput($event, digit2)" #digit1 class="w-12 h-12 text-center text-2xl border border-gray-500 rounded-md bg-white dark:bg-[#444444] text-lightText dark:text-darkText hover:border-teal-500 duration-200 ">
+        <input type="text" formControlName="digit2" maxlength="1" (input)="onDigitInput($event, digit3)" #digit2 class="w-12 h-12 text-center text-2xl border border-gray-500 rounded-md bg-white dark:bg-[#444444] text-lightText dark:text-darkText hover:border-teal-500 duration-200 ">
+        <input type="text" formControlName="digit3" maxlength="1" (input)="onDigitInput($event, digit4)" #digit3 class="w-12 h-12 text-center text-2xl border border-gray-500 rounded-md bg-white dark:bg-[#444444] text-lightText dark:text-darkText hover:border-teal-500 duration-200 ">
+        <input type="text" formControlName="digit4" maxlength="1" (input)="onDigitInput($event, digit5)" #digit4 class="w-12 h-12 text-center text-2xl border border-gray-500 rounded-md bg-white dark:bg-[#444444] text-lightText dark:text-darkText hover:border-teal-500 duration-200 ">
+        <input type="text" formControlName="digit5" maxlength="1" (input)="onDigitInput($event, digit6)" #digit5 class="w-12 h-12 text-center text-2xl border border-gray-500 rounded-md bg-white dark:bg-[#444444] text-lightText dark:text-darkText hover:border-teal-500 duration-200 ">
+        <input type="text" formControlName="digit6" maxlength="1" #digit6 class="w-12 h-12 text-center text-2xl border border-gray-500 rounded-md bg-white dark:bg-[#444444] text-lightText dark:text-darkText hover:border-teal-500 duration-200 ">
+      </div>
+
+      <div class="mt-6">
+        <button (click)="verifyEmail()" class="w-full bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600 duration-200">Verify</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="flex justify-center mt-6">
+  <nav aria-label="pagination" class="mx-auto flex w-full justify-center " role="navigation">
+    <ul class="flex flex-row items-center gap-1">
+      <li>
+        <a
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-1 pl-2.5 hover:text-teal-500 duration-300"
+        aria-label="Go to previous page"
+        [class.disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+        href="javascript:void(0);"
+        >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-chevron-left h-4 w-4"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        <span>Previous</span>
+        </a>
+      </li>
+      <ng-container *ngFor="let page of getVisiblePages()">
+        <li>
+          <a
+          [class.disabled]="page === '...'"
+          [class.border]="page === currentPage"
+          [class.border-input]="page === currentPage"
+          [class.bg-background]="page === currentPage"
+          class="inline-flex items-center  justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 hover:text-teal-500 duration-300"
+          (click)="onPageChange(page)"
+          href="javascript:void(0);"
+          >
+          {{ page }}
+          </a>
+        </li>
+      </ng-container>
+      <li>
+        <a
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:text-teal-500 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-1 pr-2.5 duration-300"
+        aria-label="Go to next page"
+        [class.disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+        href="javascript:void(0);"
+        >
+        <span>Next</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-chevron-right h-4 w-4"
+        >
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

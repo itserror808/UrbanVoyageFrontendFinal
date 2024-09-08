@@ -1,0 +1,40 @@
+/* Example CSS - adjust as needed */
+#userGrowthChart {
+  width: 100%; /* Ensure the chart spans the entire width of its container */
+  height: 400px; /* Set an initial height for larger screens */
+}
+
+@media (max-width: 768px) {
+  #userGrowthChart {
+    height: 300px; /* Adjust height for medium-sized screens */
+  }
+}
+
+@media (max-width: 576px) {
+  #userGrowthChart {
+    height: 200px; /* Adjust height for small screens (e.g., phones) */
+  }
+}
+
+
+
+.custom-popup .leaflet-popup-content-wrapper {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 13px 19px;
+  line-height: 1.4;
+}
+
+.custom-popup .leaflet-popup-tip-container {
+  width: 40px;
+  height: 20px;
+}
+
+.custom-popup .leaflet-popup-tip {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: none;
+}
